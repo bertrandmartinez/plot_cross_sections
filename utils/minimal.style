@@ -1,0 +1,68 @@
+# Figure size
+#figure.figsize : 6,4
+
+# Font
+font.serif : Computer Modern + 'font.serif'
+text.usetex : False
+font.size : 16
+
+# Legend
+legend.fontsize : 14
+legend.frameon : False
+legend.title_fontsize : 16
+legend.handlelength : 1.0    # the length of the legend lines
+legend.handletextpad : 0.5   # the space between the legend line and legend text
+legend.columnspacing : 0.5
+legend.labelspacing : 0.
+
+## ***************************************************************************
+## * TICKS                                                                   *
+## ***************************************************************************
+
+## See https://matplotlib.org/api/axis_api.html#matplotlib.axis.Tick
+xtick.top:            True   # draw ticks on the top side
+xtick.bottom:         True   # draw ticks on the bottom side
+xtick.major.size:     4.0    # major tick size in points
+xtick.minor.size:     2      # minor tick size in points
+xtick.major.width:    0.4    # major tick width in points
+xtick.minor.width:    0.3    # minor tick width in points
+xtick.direction:      in     # direction: {in, out, inout}
+xtick.minor.visible:  True   # visibility of minor ticks on x-axis
+xtick.major.top:      True   # draw x axis top major ticks
+xtick.major.bottom:   True   # draw x axis bottom major ticks
+xtick.minor.top:      True   # draw x axis top minor ticks
+xtick.minor.bottom:   True   # draw x axis bottom minor ticks
+xtick.labelsize : 16
+
+ytick.left:           True   # draw ticks on the top side
+ytick.right:          True   # draw ticks on the bottom side
+ytick.major.size:     4.0    # major tick size in points
+ytick.minor.size:     2      # minor tick size in points
+ytick.major.width:    0.4    # major tick width in points
+ytick.minor.width:    0.3    # minor tick width in points
+ytick.direction:      in     # direction: {in, out, inout}
+ytick.minor.visible:  True   # visibility of minor ticks on x-axis
+ytick.major.left:      True   # draw x axis top major ticks
+ytick.major.right:   True   # draw x axis bottom major ticks
+ytick.minor.left:      True   # draw x axis top minor ticks
+ytick.minor.right:   True   # draw x axis bottom minor ticks
+ytick.labelsize : 16
+
+# Scatter plot
+scatter.edgecolors : 'k'
+
+# Axes
+axes.labelsize : 16
+axes.titlesize : 16
+axes.linewidth : 0.8     # edge line width
+
+# Lines
+lines.linewidth : 1.5
+lines.markersize : 3
+
+# savefig
+savefig.format : png
+savefig.dpi : 160
+
+# Number of points per curve
+agg.path.chunksize : 10000000
