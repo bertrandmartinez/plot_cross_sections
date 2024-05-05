@@ -7,6 +7,21 @@ from scipy.integrate import quad
 # Classical electron radius
 r_e = value('classical electron radius')
 
+def dsig_dk_3BNa(Z,g1,k):
+
+    p1 = np.sqrt(g1**2-1)
+    g2 = g1 - k
+    p2 = np.sqrt(g2**2-1)
+    result = 16*r_e**2*Z**2*alpha/(3.*p1**2*k)*np.log((p1+p2)/(p1-p2))
+
+    b1 = np.sqrt(1.-(1. / g1 ** 2))
+    b2 = np.sqrt(1.-(1. / g2 ** 2))
+    elwert = (b1 / b2) * ((1. - np.exp(-2. * np.pi * Z * alpha / b1)) / (1. - np.exp(-2. * np.pi * Z * alpha / b2)))
+    
+    result = k * result * elwert
+
+    return result
+
 def dsig_dk_3BN(Z,g1,k):
     '''
     Formula 3BN from RMP Koch 1959
@@ -86,7 +101,7 @@ def nr_dif_cs_sp(Z, k, g1, L, elwert=True):
         dplus = p1 + p2  # maximum momentum
         dminus = p1 - p2  # minimum momentum
 
-        T1 = 16. * (Z * r_e) ** 2 * alpha / (3. * k * b1 ** 2)
+        T1 = 16. * (Z * r_e) ** 2 * alpha / (3. * k * p1 ** 2)
 
         eta = 1.0 # always true for a single exponential potential
         T2 = g_func(dplus, dminus, eta, L)
@@ -131,7 +146,6 @@ def nr_dif_cs_dp(Z, k, g1, T, ni, Zstar):
 
         Lf = Fermi_length(Z)  # Thomas - Fermi Length
         Ld = Debye_length(T, ni, Zstar)  # Debye Length
-        Ld = max(interatom_length(ni), Ld)
 
         T1 = 16. * (Z * r_e) ** 2 * alpha / (3. * k * p1 ** 2)
 
@@ -156,7 +170,6 @@ def mr_dif_cs_sp(Z, k, g1, L):
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
         L : scale-length of the potential
-        elwert : multiply by the Elwert correction (default=True)
     outputs :
         result (m^2) : midly relativistic Bremsstrahlung differential cross-section
     '''
@@ -184,7 +197,6 @@ def mr_dif_cs_dp(Z, k, g1, T, ni, Zstar):
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
         L : scale-length of the potential
-        elwert : multiply by the Elwert correction (default=True)
     outputs :
         result (m^2) : midly relativistic Bremsstrahlung differential cross-section
     '''
@@ -200,7 +212,6 @@ def mr_dif_cs_dp(Z, k, g1, T, ni, Zstar):
         
         Lf = Fermi_length(Z)
         Ld = Debye_length(T, ni, Zstar)  # Debye Length
-        Ld = max(interatom_length(ni), Ld)
 
         # Eq. (22)
         etar = 1.0
@@ -224,7 +235,6 @@ def ur_dif_cs_sp(Z, k, g1, L):
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
         L : scale-length of the potential
-        elwert : multiply by the Elwert correction (default=True)
     outputs :
         result (m^2) : ultra relativistic Bremsstrahlung differential cross-section
     '''
@@ -253,12 +263,11 @@ def ur_dif_cs_dp(Z, k, g1, T, ni, Zstar):
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
         L : scale-length of the potential
-        elwert : multiply by the Elwert correction (default=True)
     outputs :
         result (m^2) : ultra relativistic Bremsstrahlung differential cross-section
     '''
 
-    condition = (k > 0.) and (k < g1 - 1.) and (g1 >= 2.) and (g1 <= 100.)
+    condition = (k > 0.) and (k < g1 - 1.) and (g1 >= 100.)
     result = 0.0
 
     if condition:
@@ -269,7 +278,6 @@ def ur_dif_cs_dp(Z, k, g1, T, ni, Zstar):
         
         Lf = Fermi_length(Z)
         Ld = Debye_length(T, ni, Zstar)  # Debye Length
-        Ld = max(interatom_length(ni), Ld)
 
         # Eq. (22)
         etar = 1.0
@@ -294,7 +302,6 @@ def dif_cs_sp(Z, k, g1, L):
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
         L : scale-length of the potential
-        elwert : multiply by the Elwert correction (default=True)
     outputs :
         result (m^2) : Bremsstrahlung differential cross-section
     '''
@@ -318,7 +325,6 @@ def dif_cs_dp(Z, k, g1, T, ni, Zstar):
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
         L : scale-length of the potential
-        elwert : multiply by the Elwert correction (default=True)
     outputs :
         result (m^2) : Bremsstrahlung differential cross-section
     '''
@@ -429,7 +435,7 @@ def cdf_sp_quad(Z, k, g1, L):
     
     return result
 
-def tot_rcs_quad(Z, g1, L):
+def rad_cs_sp(Z, g1, L):
     '''
     This function computes the radiative cross-section for Bremstrahlung
     with quadrature integration
@@ -446,7 +452,41 @@ def tot_rcs_quad(Z, g1, L):
     
     return phi
 
-def tot_cs_sp(Z, g1, L):
+def rad_cs_dp(Z, g1, L, T, ni, Zstar):
+    '''
+    This function computes the radiative cross-section for Bremstrahlung
+    with quadrature integration
+    inputs :
+        Z : atomic number
+        k : normalized energy of the photon k = hbar \omega / mc^2
+        g1 : Lorentz factor of the incident electron
+        L : scale-length of the potential
+    outputs :
+        CDF value
+    '''
+
+    phi = quad(lambda k, Z, g1: k*dif_cs_dp(Z, k, g1, T, ni, Zstar), 0., g1-1., args=(Z, g1))[0]
+    
+    return phi
+
+def tot_cs_sp_quad(Z, g1, L):
+    '''
+    This function computes the cross-section for Bremstrahlung
+    with quadrature integration
+    inputs :
+        Z : atomic number
+        k : normalized energy of the photon k = hbar \omega / mc^2
+        g1 : Lorentz factor of the incident electron
+        L : scale-length of the potential
+    outputs :
+        CDF value
+    '''
+
+    sigma = quad(lambda k, Z, g1: dif_cs_sp(Z, k, g1, L), 0., g1-1., args=(Z, g1))[0]
+    
+    return sigma
+
+def tot_cs_sp_gauss(Z, g1, L, kmin, if_log):
     '''
     Computes the Bremsstrahlung total cross-section
     assuming a potential with a single exponential
@@ -460,17 +500,82 @@ def tot_cs_sp(Z, g1, L):
         result (m^2) : total Bremsstrahlung differential cross-section
     '''
 
-    f = lambda x: x * dif_cs_sp(Z, x, g1, L)
-    deg = 100
+    if if_log :
+
+        f = lambda x: x * dif_cs_sp(Z, x, g1, L)
+        deg = 100
+        
+        a = np.log(kmin*(g1-1.))
+        b = np.log(g1-1.)
+        
+        x, w = np.polynomial.legendre.leggauss(deg)
+        t = np.exp(0.5 * (x + 1) * (b - a) + a)
+        
+        integral = 0.0
+        for j in range(deg):
+            integral += np.sum(w[j] * f(t[j])) * 0.5 * (b - a)
+
+    else :
     
-    a = np.log(1.e-9*(g1-1.))
-    b = np.log(g1-1.)
+        f = lambda x: dif_cs_sp(Z, x, g1, L)
+        deg = 100
     
-    x, w = np.polynomial.legendre.leggauss(deg)
-    t = np.exp(0.5 * (x + 1) * (b - a) + a)
+        # Denominator
+        a = 0.0
+        b = g1 - 1.0
     
-    integral = 0.0
-    for j in range(deg):
-        integral += np.sum(w[j] * f(t[j])) * 0.5 * (b - a)
+        x, w = np.polynomial.legendre.leggauss(deg)
+        t = 0.5 * (x + 1) * (b - a) + a
+    
+        integral = 0.0
+        for j in range(deg):
+            integral += np.sum(w[j] * f(t[j])) * 0.5 * (b - a)
+    
+    return integral
+
+def tot_cs_dp_gauss(Z, g1, T, ni, Zstar, kmin, if_log):
+    '''
+    Computes the Bremsstrahlung total cross-section
+    assuming a potential with a single exponential
+    inputs :
+        Z : atomic number
+        k : normalized energy of the photon k = hbar \omega / mc^2
+        g1 : Lorentz factor of the incident electron
+        L : scale-length of the potential
+        elwert : multiply by the Elwert correction (default=True)
+    outputs :
+        result (m^2) : total Bremsstrahlung differential cross-section
+    '''
+
+    if if_log :
+
+        f = lambda x: x * dif_cs_dp(Z, x, g1, T, ni, Zstar)
+        deg = 100
+        
+        a = np.log(kmin*(g1-1.))
+        b = np.log(g1-1.)
+        
+        x, w = np.polynomial.legendre.leggauss(deg)
+        t = np.exp(0.5 * (x + 1) * (b - a) + a)
+        
+        integral = 0.0
+        for j in range(deg):
+            integral += np.sum(w[j] * f(t[j])) * 0.5 * (b - a)
+
+    else :
+    
+        f = lambda x: dif_cs_dp(Z, x, g1, T, ni, Zstar)
+        deg = 100
+    
+        # Denominator
+        a = 0.0
+        b = g1 - 1.0
+    
+        x, w = np.polynomial.legendre.leggauss(deg)
+        t = 0.5 * (x + 1) * (b - a) + a
+    
+        integral = 0.0
+        for j in range(deg):
+            integral += np.sum(w[j] * f(t[j])) * 0.5 * (b - a)
     
     return integral

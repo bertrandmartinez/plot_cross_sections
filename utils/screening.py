@@ -96,9 +96,11 @@ def Debye_length(T, ni, Zstar):
 
     T /= 511.
     compton_wavelength = hbar / (m_e * c)
-    length = np.sqrt(T * epsilon_0 * m_e * c**2 / ( e**2 * ni * Zstar * (Zstar + 1.)))
-
+    length = np.sqrt(T * epsilon_0 * m_e * c**2 / ( e**2 * ni * Zstar * (Zstar + 1)))
+    
     result = length / compton_wavelength
+    
+    result = max(interatom_length(ni), result)
 
     return result
 
@@ -112,9 +114,10 @@ def interatom_length(ni):
     '''
     # ni in /m3
     compton_wavelength = hbar / (m_e * c)
-    result = (3./(4*np.pi*ni))**(1./3.)
-
-    return result / compton_wavelength
+    length = (3./(4*np.pi*ni))**(1./3.)
+    result = length / compton_wavelength
+    
+    return result
 
 def I1_func(d, L, eta):
     '''
