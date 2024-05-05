@@ -6,13 +6,23 @@ A set of user-friendly jupyter notebooks plotting the cross-sections of QED proc
 
 # Table of Contents
 
-1. [Martinez_Phys_Plasmas_26_103109_2019](#folder1)
-    - [notebooks](#subfolder1)
-    - [figures](#subfolder2)
-2. [Lobet_PhD_Univ_Bordeaux_2015](#folder2)
-    - [notebooks](#subfolder1)
-    - [figures](#subfolder2)
-3. [utils](#folder2)
+1. [Lobet_PhD_Univ_Bordeaux_2015]
+    - [notebooks]
+    - [figures]
+2. [Martinez_Phys_Plasmas_26_103109_2019]
+    - [notebooks]
+        - [figure_2.ipynb]
+        - [...]
+        - [figure_7.ipynb]
+    - [figures]
+        - [figure_2.png]
+        - [...]
+        - [figure_7.png]
+
+3. [utils]
+    - [bremstrahlung.py]
+    - [screening.py]
+    - [SeltzerBerger.py]
 
 # Installation and setup
 
@@ -22,9 +32,7 @@ No installation is required.
 
 Here are the steps to use this project:
 
-1. **1:** Identify the article you are interested in and go to folder
-2. **2:** Identify the figure you would like to reproduce and open the notebook (called figure_x.ipynb)
-3. **3:** Run the notebook and observe the result
-4. **4:** Feel free to change the physical parameters
-
-Navigate to the notebook, execute it and observe the figure
+1. Identify the article you are interested in and go to folder
+2. Identify the figure you would like to reproduce and open the notebook (called figure_x.ipynb)
+3. Run the notebook and observe the result
+4. Feel free to change the physical parameters
