@@ -6,7 +6,7 @@ def read_data(Z):
     cs_absx = np.zeros(Nx)
     cs_absy, cs_tot, cs_rad = np.zeros(Ny), np.zeros(Ny), np.zeros(Ny)
     cs_seltzer = [np.zeros(Nx) for n1 in range(Ny)]
-    f = open('../utils/Seltzer_Berger_Data_Z{:2d}.txt'.format(Z),'r')
+    f = open('../../utils/Seltzer_Berger_Data_Z{:2d}.txt'.format(Z),'r')
     data  = f.readlines()
     f.close()
     N = len(data)
