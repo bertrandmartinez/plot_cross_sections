@@ -46,7 +46,7 @@ def read_data(Z, T1):
 
     return cs_absx, cs_seltzer[index]
 
-def tot_cs_SB(Z):
+def get_data_SB(Z):
 # Do not use this routine, it is still experimental and not validated
 
     # Compute the total cross-section from the data copy/pasted from S.M. Seltzer and M.J. BergerNuclear Instruments and Methods in Physics Research B12 (1985) 95-134
@@ -54,7 +54,7 @@ def tot_cs_SB(Z):
     # Define size of arrays
     M, N = 31, 14
     axis_k = np.zeros(N)
-    axis_g1, phi, sigma = np.zeros(M), np.zeros(M), np.zeros(M)
+    axis_g1, phi = np.zeros(M), np.zeros(M)
     cs_seltzer = np.zeros([M, N])
 
     # open the file
@@ -91,18 +91,8 @@ def tot_cs_SB(Z):
         fac = (Z**2/b2) * 1.e-31
         cs_seltzer[j] *= fac
 
-    sigma = np.zeros(M)
-    phirad = np.zeros(M)
-    for j in range(M):
-        tmp = axis_k * (axis_g1[j] - 1.0)
-        for k in range(1,N):
-            sigma[j] += cs_seltzer[j][k]  * (axis_k[k] - axis_k[k-1]) / axis_k[k]
-            phirad[j] += cs_seltzer[j][k] * (axis_k[k] - axis_k[k-1])
-
     # convert phi
-    phi *= 4. * alpha * (r_e * Z)**2 * axis_g1 * m_e * c**2# / (4.*np.pi*epsilon_0)
-    print(phi/phirad)
-    print(phirad/phi)
+#    phi *= 4. * alpha * (r_e * Z)**2 * axis_g1 * m_e * c**2# / (4.*np.pi*epsilon_0)
 
-    return axis_g1, sigma, phirad
+    return axis_g1, axis_k, cs_seltzer, phi
 
