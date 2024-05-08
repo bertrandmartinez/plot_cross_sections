@@ -7,8 +7,18 @@ from scipy.integrate import quad
 # Classical electron radius
 r_e = value('classical electron radius')
 
-def dsig_dk_3BNa(Z,g1,k):
-
+def dsig_dk_3BNa(Z, g1, k):
+    '''
+    Bremsstrahlung differential cross-section assuming no screening
+    Eq.(3BNa) from H.W. Koch and J.W. Motz Review of Modern Physics, 31, 4 (1959)
+    inputs :
+        Z : atomic number
+        k : normalized energy of the photon k = hbar \omega / mc^2
+        g1 : Lorentz factor of the incident electron
+    outputs :
+        result : differential cross-section in m^2
+    '''
+    
     p1 = np.sqrt(g1**2-1)
     g2 = g1 - k
     p2 = np.sqrt(g2**2-1)
@@ -22,15 +32,16 @@ def dsig_dk_3BNa(Z,g1,k):
 
     return result
 
-def dsig_dk_3BN(Z,g1,k):
+def dsig_dk_3BN(Z, g1, k):
     '''
-    Formula 3BN from RMP Koch 1959
-    inputs:
+    Bremsstrahlung differential cross-section assuming no screening
+    Eq.(3BN) from H.W. Koch and J.W. Motz Review of Modern Physics, 31, 4 (1959)
+    inputs :
         Z : atomic number
-        g1 : Lorentz factor of the incident electron
         k : normalized energy of the photon k = hbar \omega / mc^2
+        g1 : Lorentz factor of the incident electron
     outputs :
-        result (m^2) : nonrelativistic Bremsstrahlung differential cross-section
+        result : differential cross-section in m^2
     '''
 
     condition = (k > 0.) and (k < g1 - 1.)
@@ -54,7 +65,14 @@ def dsig_dk_3BN(Z,g1,k):
 
 def factor_Elwert(Z, k, g1):
     '''
-    Computes the Elwert factor, see Eq.(11)
+    Elwert factor
+    Eq.(11) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
+    inputs :
+        Z : atomic number
+        k : normalized energy of the photon k = hbar \omega / mc^2
+        g1 : Lorentz factor of the incident electron
+    outputs :
+        result : Elwert factor (no units)
     '''
 
     condition = (k > 0.) and (k < g1 - 1.)
@@ -76,16 +94,16 @@ def factor_Elwert(Z, k, g1):
 
 def nr_dif_cs_sp(Z, k, g1, L, elwert=True):
     '''
-    Computes the nonrelativistic Bremsstrahlung differential cross-section
-    assuming a potential with a single exponential
+    Non-relativistic Bremsstrahlung differential cross-section assuming screening with a single-exponential potential (Fermi)
+    Eq.(8) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
     inputs :
         Z : atomic number
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
-        L : scale-length of the potential
+        L : Fermi length normalized by Compton wavelength
         elwert : multiply by the Elwert correction (default=True)
     outputs :
-        result (m^2) : nonrelativistic Bremsstrahlung differential cross-section
+        result : differential cross-section (m^2)
     '''
 
     condition = (k > 0.) and (k < g1 - 1.)
@@ -115,16 +133,17 @@ def nr_dif_cs_sp(Z, k, g1, L, elwert=True):
 
 def nr_dif_cs_dp(Z, k, g1, T, ni, Zstar):
     '''
-    Computes the non relativistic Bremsstrahlung differential cross-section
-    assuming a potential with a sum of two exponentials
+    Non-relativistic Bremsstrahlung differential cross-section assuming screening with a double-exponential potential (Fermi)
+    Eq.(8) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
     inputs :
         Z : atomic number
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
-        L : scale-length of the potential
-        elwert : multiply by the Elwert correction (default=True)
+        T : temperature of plasma (keV)
+        ni : density of plasma (/m3)
+        Zstar : ionization degree of plasma
     outputs :
-        result (m^2) : non relativistic Bremsstrahlung differential cross-section
+        result : differential cross-section (m^2)
     '''
     
     condition = (k > 0.) and (k < g1 - 1.) and (g1 > 1.) and (g1 <= 2.)
@@ -163,15 +182,16 @@ def nr_dif_cs_dp(Z, k, g1, T, ni, Zstar):
 
 def mr_dif_cs_sp(Z, k, g1, L):
     '''
-    Computes the midly relativistic Bremsstrahlung differential cross-section
-    assuming a potential with a single exponential
+    Midly-relativistic Bremsstrahlung differential cross-section assuming screening with a single-exponential potential (Fermi)
+    Eq.(12) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
     inputs :
         Z : atomic number
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
-        L : scale-length of the potential
+        L : Fermi length normalized by Compton wavelength
+        elwert : multiply by the Elwert correction (default=True)
     outputs :
-        result (m^2) : midly relativistic Bremsstrahlung differential cross-section
+        result : differential cross-section (m^2)
     '''
 
     condition = (k > 0.) and (k < g1 - 1.) and (g1 >= 2.) and (g1 <= 100.)
@@ -190,15 +210,17 @@ def mr_dif_cs_sp(Z, k, g1, L):
 
 def mr_dif_cs_dp(Z, k, g1, T, ni, Zstar):
     '''
-    Computes the midly relativistic Bremsstrahlung differential cross-section
-    assuming a potential with a sum of two exponentials
+    Midly-relativistic Bremsstrahlung differential cross-section assuming screening with a double-exponential potential (Fermi)
+    Eq.(12) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
     inputs :
         Z : atomic number
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
-        L : scale-length of the potential
+        T : temperature of plasma (keV)
+        ni : density of plasma (/m3)
+        Zstar : ionization degree of plasma
     outputs :
-        result (m^2) : midly relativistic Bremsstrahlung differential cross-section
+        result : differential cross-section (m^2)
     '''
 
     condition = (k > 0.) and (k < g1 - 1.) and (g1 >= 2.) and (g1 <= 100.)
@@ -228,15 +250,16 @@ def mr_dif_cs_dp(Z, k, g1, T, ni, Zstar):
 
 def ur_dif_cs_sp(Z, k, g1, L):
     '''
-    Computes the ultra relativistic Bremsstrahlung differential cross-section
-    assuming a potential with a single exponential
+    Ultra-relativistic Bremsstrahlung differential cross-section assuming screening with a single-exponential potential (Fermi)
+    Eq.(23) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
     inputs :
         Z : atomic number
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
-        L : scale-length of the potential
+        L : Fermi length normalized by Compton wavelength
+        elwert : multiply by the Elwert correction (default=True)
     outputs :
-        result (m^2) : ultra relativistic Bremsstrahlung differential cross-section
+        result : differential cross-section (m^2)
     '''
 
     condition = (k > 0.) and (k < g1 - 1.) and (g1 >= 100.)
@@ -256,15 +279,17 @@ def ur_dif_cs_sp(Z, k, g1, L):
 
 def ur_dif_cs_dp(Z, k, g1, T, ni, Zstar):
     '''
-    Computes the ultra relativistic Bremsstrahlung differential cross-section
-    assuming a potential with a sum of two exponentials
+    Ultra-relativistic Bremsstrahlung differential cross-section assuming screening with a double-exponential potential (Fermi)
+    Eq.(23) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
     inputs :
         Z : atomic number
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
-        L : scale-length of the potential
+        T : temperature of plasma (keV)
+        ni : density of plasma (/m3)
+        Zstar : ionization degree of plasma
     outputs :
-        result (m^2) : ultra relativistic Bremsstrahlung differential cross-section
+        result : differential cross-section (m^2)
     '''
 
     condition = (k > 0.) and (k < g1 - 1.) and (g1 >= 100.)
@@ -295,15 +320,16 @@ def ur_dif_cs_dp(Z, k, g1, T, ni, Zstar):
 
 def dif_cs_sp(Z, k, g1, L):
     '''
-    Computes the Bremsstrahlung differential cross-section
-    assuming a potential with a single exponential
+    Bremsstrahlung differential cross-section assuming screening with a single-exponential potential (Fermi)
+    Gather Eq.(8), Eq.(12), Eq.(23) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
     inputs :
         Z : atomic number
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
-        L : scale-length of the potential
+        L : Fermi length normalized by Compton wavelength
+        elwert : multiply by the Elwert correction (default=True)
     outputs :
-        result (m^2) : Bremsstrahlung differential cross-section
+        result : differential cross-section (m^2)
     '''
 
     result = 0.0
@@ -318,15 +344,17 @@ def dif_cs_sp(Z, k, g1, L):
 
 def dif_cs_dp(Z, k, g1, T, ni, Zstar):
     '''
-    Computes the Bremsstrahlung differential cross-section
-    assuming a potential with a sum of two exponentials
+    Bremsstrahlung differential cross-section assuming screening with a double-exponential potential (Fermi)
+    Gather Eq.(8), Eq.(12), Eq.(23) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
     inputs :
         Z : atomic number
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
-        L : scale-length of the potential
+        T : temperature of plasma (keV)
+        ni : density of plasma (/m3)
+        Zstar : ionization degree of plasma
     outputs :
-        result (m^2) : Bremsstrahlung differential cross-section
+        result : differential cross-section (m^2)
     '''
 
     # Choose the formula depending on the energy of the incident electron
@@ -343,16 +371,16 @@ def dif_cs_dp(Z, k, g1, T, ni, Zstar):
 
 def cdf_sp_gauss(Z, k, g1, L, if_log):
     '''
-    This function computes the CDF of the Bremsstrahlung cross-section
-    with Gauss Legendre integration
+    Cumulative Distribution Function (CDF) of the Bremsstrahlung process assuming a single-exponential potential
+    Integration method is Gauss Legendre integration
     inputs :
         Z : atomic number
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
-        L : scale-length of the potential
-        if_log : boolean to integrate withor without the log variable change
+        L : Fermi length normalized by Compton wavelength
+        if_log : True/False whether to set k-> ln(k) in the integral
     outputs :
-        CDF value
+        result : CDF (no units)
     '''
 
     if if_log :
@@ -417,16 +445,15 @@ def cdf_sp_gauss(Z, k, g1, L, if_log):
 
 def cdf_sp_quad(Z, k, g1, L):
     '''
-    This function computes the CDF of the Bremsstrahlung cross-section
-    with quadrature integration
+    Cumulative Distribution Function (CDF) of the Bremsstrahlung process  assuming screening with a single-exponential potential (Fermi)
+    Integration method is quadrature
     inputs :
         Z : atomic number
         k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
-        L : scale-length of the potential
-        if_log : boolean to integrate withor without the log variable change
+        L : Fermi length normalized by Compton wavelength
     outputs :
-        CDF value
+        result : CDF (no units)
     '''
 
     numerator = quad(lambda k, Z, g1: dif_cs_sp(Z, k, g1, L), 0., k, args=(Z, g1))[0]
@@ -437,15 +464,14 @@ def cdf_sp_quad(Z, k, g1, L):
 
 def rad_cs_sp(Z, g1, L):
     '''
-    This function computes the radiative cross-section for Bremstrahlung
-    with quadrature integration
+    Bremsstrahlung radiative cross-section assuming screening with a single-exponential potential (Fermi)
+    Integration method is quadrature
     inputs :
         Z : atomic number
-        k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
         L : scale-length of the potential
     outputs :
-        CDF value
+        result : radiative cross-section (m^2)
     '''
 
     phi = quad(lambda k, Z, g1: k*dif_cs_sp(Z, k, g1, L), 0., g1-1., args=(Z, g1))[0]
@@ -454,15 +480,14 @@ def rad_cs_sp(Z, g1, L):
 
 def rad_cs_dp(Z, g1, L, T, ni, Zstar):
     '''
-    This function computes the radiative cross-section for Bremstrahlung
-    with quadrature integration
+    Bremsstrahlung radiative cross-section assuming screening with a double-exponential potential (Fermi)
+    Integration method is quadrature
     inputs :
         Z : atomic number
-        k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
         L : scale-length of the potential
     outputs :
-        CDF value
+        result : radiative cross-section (m^2)
     '''
 
     phi = quad(lambda k, Z, g1: k*dif_cs_dp(Z, k, g1, T, ni, Zstar), 0., g1-1., args=(Z, g1))[0]
@@ -471,33 +496,32 @@ def rad_cs_dp(Z, g1, L, T, ni, Zstar):
 
 def tot_cs_sp_quad(Z, g1, L):
     '''
-    This function computes the cross-section for Bremstrahlung
-    with quadrature integration
+    Bremsstrahlung total cross-section assuming screening with a single-exponential potential (Fermi)
+    Integration method is quadrature
     inputs :
         Z : atomic number
-        k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
         L : scale-length of the potential
     outputs :
-        CDF value
+        result : total cross-section (m^2)
     '''
 
-    sigma = quad(lambda k, Z, g1: dif_cs_sp(Z, k, g1, L), 0., g1-1., args=(Z, g1))[0]
+    result = quad(lambda k, Z, g1: dif_cs_sp(Z, k, g1, L), 0., g1-1., args=(Z, g1))[0]
     
-    return sigma
+    return result
 
 def tot_cs_sp_gauss(Z, g1, L, kmin, if_log):
     '''
-    Computes the Bremsstrahlung total cross-section
-    assuming a potential with a single exponential
+    Bremsstrahlung total cross-section assuming screening with a single-exponential potential (Fermi)
+    Integration method is Gauss-Legendre
     inputs :
         Z : atomic number
-        k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
         L : scale-length of the potential
-        elwert : multiply by the Elwert correction (default=True)
+        kmin : minimum bound of integration
+        if_log : True/False whether to set k-> ln(k) in the integral
     outputs :
-        result (m^2) : total Bremsstrahlung differential cross-section
+        result : total cross-section (m^2)
     '''
 
     if if_log :
@@ -535,16 +559,18 @@ def tot_cs_sp_gauss(Z, g1, L, kmin, if_log):
 
 def tot_cs_dp_gauss(Z, g1, T, ni, Zstar, kmin, if_log):
     '''
-    Computes the Bremsstrahlung total cross-section
-    assuming a potential with a single exponential
+    Bremsstrahlung total cross-section assuming screening with a double-exponential potential (Fermi)
+    Integration method is Gauss-Legendre
     inputs :
         Z : atomic number
-        k : normalized energy of the photon k = hbar \omega / mc^2
         g1 : Lorentz factor of the incident electron
-        L : scale-length of the potential
-        elwert : multiply by the Elwert correction (default=True)
+        T : temperature of plasma (keV)
+        ni : density of plasma (/m3)
+        Zstar : ionization degree of plasma
+        kmin : minimum bound of integration
+        if_log : True/False whether to set k-> ln(k) in the integral
     outputs :
-        result (m^2) : total Bremsstrahlung differential cross-section
+        result : total cross-section (m^2)
     '''
 
     if if_log :

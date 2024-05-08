@@ -6,15 +6,17 @@ from screening import Fermi_length, Debye_length, Coulomb_correction, I1_func, I
 # Classical electron radius
 r_e = value('classical electron radius')
 
-def dif_cs_sp(Z, gp, k, L):
+def bh_dif_cs_sp(Z, gp, k, L):
     '''
-    This function computes the differential Bethe-Heitler cross-section
+    Bethe Heitler differential cross-section assuming screening with a single-exponential potential (Fermi)
+    Eq.(25) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
     inputs :
-        gp is the energy of the positron
-        k is the energy of the photon
-        Z is the atomic number
+        Z : atomic number
+        gp : Lorentz factor of the emitted positron
+        k : normalized energy of the photon k = hbar \omega / mc^2
+        L : Fermi length normalized by Compton wavelength
     outputs :
-        result is the differential cross-section in m^2
+        result : differential cross-section  (m^2)
     '''
 
     result = 0.0
@@ -39,15 +41,19 @@ def dif_cs_sp(Z, gp, k, L):
 
     return result
 
-def dif_cs_dp(Z, gp, k, L, T, ni, Zstar):
+def bh_dif_cs_dp(Z, gp, k, T, ni, Zstar):
     '''
-    This function computes the differential Bethe-Heitler cross-section
+    Bethe Heitler differential cross-section assuming screening with a double-exponential potential (Fermi + Debye)
+    Eq.(25) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
     inputs :
-        gp is the energy of the positron
-        k is the energy of the photon
-        Z is the atomic number
+        Z : atomic number
+        gp : Lorentz factor of the emitted positron
+        k : normalized energy of the photon k = hbar \omega / mc^2
+        T : temperature of plasma (keV)
+        ni : density of plasma (/m3)
+        Zstar : ionization degree of plasma
     outputs :
-        result is the differential cross-section in m^2
+        result : differential cross-section  (m^2)
     '''
 
     result = 0.0
@@ -83,43 +89,48 @@ def dif_cs_dp(Z, gp, k, L, T, ni, Zstar):
 
     return result
 
-
-def bh_cs(Z, k):
+def bh_tot_cs_sp(Z, k, L):
     '''
-    This function computes the total Bethe-Heitler cross-section
+    Bethe-Heitler total cross-section assuming screening with a single-exponential potential (Fermi)
+    Integration of Eq.(25) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
     inputs :
-        Z is the atomic number
-        k is the energy of the photon
+        Z : atomic number
+        k : normalized energy of the photon k = hbar \omega / mc^2
+        L : Fermi length normalized by Compton wavelength
     outputs :
-        result is the total cross-section in m^2
+        result : total cross-section  (m^2)
     '''
+
+    condition = (k >= 2.)
 
     result = 0.0
-    condition = (k > 2.0)
-
     if condition:
-        result = quad(bh_cs_dif, 1.0, k-1.0, args=(k, Z))[0]
+        # we switch the order of variables for quad
+        bh_dif_cs_sp_reorder = lambda gp, Z, k, L: bh_dif_cs_sp(Z, gp, k, L)
+        result = quad(bh_dif_cs_sp_reorder, 1.0, k-1., args=(Z, k, L))[0]
 
     return result
 
-
-def bh_cdf(Z, k, gp):
+def bh_tot_cs_dp(Z, k, T, ni, Zstar):
     '''
-    This function computes the CDF of the Bethe-Heitler cross-section
+    Bethe-Heitler total cross-section assuming screening with a double-exponential potential (Fermi + Debye)
+    Integration of Eq.(25) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
     inputs :
-        Z is the atomic number
-        k is the energy of the photon
-        gp is the energy of the positron
+        Z : atomic number
+        k : normalized energy of the photon k = hbar \omega / mc^2
+        T : temperature of plasma (keV)
+        ni : density of plasma (/m3)
+        Zstar : ionization degree of plasma
     outputs :
-        result is the CDF of the Bethe-Heitler cs (no units and between 0 and 1 by definition)
+        result : total cross-section (m^2)
     '''
 
-    condition = (k >= 2.) and (gp >= 1.) and (gp <= k-1.)
+    condition = (k >= 2.)
 
     result = 0.0
     if condition:
-        numerator = quad(bh_cs_dif, 1.0, gp, args=(k, Z))[0]
-        denominator = bh_cs(Z, k)
-        result = numerator / denominator
+        # we switch the order of variables for quad
+        bh_dif_cs_dp_reorder = lambda gp, Z, k, T, ni, Zstar: bh_dif_cs_dp(Z, gp, k, T, ni, Zstar)
+        result = quad(bh_dif_cs_dp_reorder, 1.0, k-1., args=(Z, k, T, ni, Zstar))[0]
 
     return result
