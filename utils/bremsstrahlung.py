@@ -7,7 +7,7 @@ from scipy.integrate import quad
 # Classical electron radius
 r_e = value('classical electron radius')
 
-def dsig_dk_3BNa(Z, g1, k):
+def br_dif_cs_3BNa(Z, g1, k):
     '''
     Bremsstrahlung differential cross-section assuming no screening
     Eq.(3BNa) from H.W. Koch and J.W. Motz Review of Modern Physics, 31, 4 (1959)
@@ -32,7 +32,7 @@ def dsig_dk_3BNa(Z, g1, k):
 
     return result
 
-def dsig_dk_3BN(Z, g1, k):
+def br_dif_cs_3BN(Z, g1, k):
     '''
     Bremsstrahlung differential cross-section assuming no screening
     Eq.(3BN) from H.W. Koch and J.W. Motz Review of Modern Physics, 31, 4 (1959)
@@ -92,7 +92,7 @@ def factor_Elwert(Z, k, g1):
     
     return result
 
-def nr_dif_cs_sp(Z, k, g1, L, elwert=True):
+def br_dif_cs_sp_nr(Z, k, g1, L, elwert=True):
     '''
     Non-relativistic Bremsstrahlung differential cross-section assuming screening with a single-exponential potential (Fermi)
     Eq.(8) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
@@ -131,7 +131,7 @@ def nr_dif_cs_sp(Z, k, g1, L, elwert=True):
         result = T1 * T2 * T3
     return result
 
-def nr_dif_cs_dp(Z, k, g1, T, ni, Zstar):
+def br_dif_cs_dp_nr(Z, k, g1, T, ni, Zstar):
     '''
     Non-relativistic Bremsstrahlung differential cross-section assuming screening with a double-exponential potential (Fermi)
     Eq.(8) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
@@ -180,7 +180,7 @@ def nr_dif_cs_dp(Z, k, g1, T, ni, Zstar):
         result = T1 * (Tf + Td + G) * T3
     return result
 
-def mr_dif_cs_sp(Z, k, g1, L):
+def bf_dif_cs_sp_mr(Z, k, g1, L):
     '''
     Midly-relativistic Bremsstrahlung differential cross-section assuming screening with a single-exponential potential (Fermi)
     Eq.(12) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
@@ -208,7 +208,7 @@ def mr_dif_cs_sp(Z, k, g1, L):
 
     return result
 
-def mr_dif_cs_dp(Z, k, g1, T, ni, Zstar):
+def br_dif_cs_dp_mr(Z, k, g1, T, ni, Zstar):
     '''
     Midly-relativistic Bremsstrahlung differential cross-section assuming screening with a double-exponential potential (Fermi)
     Eq.(12) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
@@ -248,7 +248,7 @@ def mr_dif_cs_dp(Z, k, g1, T, ni, Zstar):
 
     return result
 
-def ur_dif_cs_sp(Z, k, g1, L):
+def br_dif_cs_sp_ur(Z, k, g1, L):
     '''
     Ultra-relativistic Bremsstrahlung differential cross-section assuming screening with a single-exponential potential (Fermi)
     Eq.(23) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
@@ -277,7 +277,7 @@ def ur_dif_cs_sp(Z, k, g1, L):
 
     return result
 
-def ur_dif_cs_dp(Z, k, g1, T, ni, Zstar):
+def br_dif_cs_dp_ur(Z, k, g1, T, ni, Zstar):
     '''
     Ultra-relativistic Bremsstrahlung differential cross-section assuming screening with a double-exponential potential (Fermi)
     Eq.(23) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
@@ -318,7 +318,7 @@ def ur_dif_cs_dp(Z, k, g1, T, ni, Zstar):
 
     return result
 
-def dif_cs_sp(Z, k, g1, L):
+def br_dif_cs_sp(Z, k, g1, L):
     '''
     Bremsstrahlung differential cross-section assuming screening with a single-exponential potential (Fermi)
     Gather Eq.(8), Eq.(12), Eq.(23) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
@@ -334,15 +334,15 @@ def dif_cs_sp(Z, k, g1, L):
 
     result = 0.0
     if (g1 > 1.) and (g1 <= 2.) : # Eq.(8)
-        result = nr_dif_cs_sp(Z, k, g1, L)
+        result = br_dif_cs_sp_nr(Z, k, g1, L)
     elif (g1 > 2.) and (g1 <= 100.) : # Eq.(12)
-        result = mr_dif_cs_sp(Z, k, g1, L)
+        result = bf_dif_cs_sp_mr(Z, k, g1, L)
     elif (g1 > 100.) : # Eq.(23)
-        result = ur_dif_cs_sp(Z, k, g1, L)
+        result = br_dif_cs_sp_ur(Z, k, g1, L)
 
     return result
 
-def dif_cs_dp(Z, k, g1, T, ni, Zstar):
+def br_dif_cs_dp(Z, k, g1, T, ni, Zstar):
     '''
     Bremsstrahlung differential cross-section assuming screening with a double-exponential potential (Fermi)
     Gather Eq.(8), Eq.(12), Eq.(23) from B. Martinez et al, Physics of Plasmas, 36, 103109 (2019)
@@ -361,15 +361,15 @@ def dif_cs_dp(Z, k, g1, T, ni, Zstar):
     result = 0.0
     
     if (g1 > 1.) and (g1 <= 2.) : # Eq.(8)
-        result = nr_dif_cs_dp(Z, k, g1, T, ni, Zstar)
+        result = br_dif_cs_dp_nr(Z, k, g1, T, ni, Zstar)
     elif (g1 > 2.) and (g1 <= 100.) : # Eq.(12)
-        result = mr_dif_cs_dp(Z, k, g1, T, ni, Zstar)
+        result = br_dif_cs_dp_mr(Z, k, g1, T, ni, Zstar)
     elif (g1 > 100.) : # Eq.(23)
-        result = ur_dif_cs_dp(Z, k, g1, T, ni, Zstar)
+        result = br_dif_cs_dp_ur(Z, k, g1, T, ni, Zstar)
 
     return result
 
-def cdf_sp_gauss(Z, k, g1, L, if_log):
+def br_cdf_sp_gauss(Z, k, g1, L, if_log):
     '''
     Cumulative Distribution Function (CDF) of the Bremsstrahlung process assuming a single-exponential potential
     Integration method is Gauss Legendre integration
@@ -385,7 +385,7 @@ def cdf_sp_gauss(Z, k, g1, L, if_log):
 
     if if_log :
 
-        g = lambda x: x * dif_cs_sp(Z, x, g1, L)
+        g = lambda x: x * br_dif_cs_sp(Z, x, g1, L)
         deg = 100
 
         # Numerator
@@ -414,7 +414,7 @@ def cdf_sp_gauss(Z, k, g1, L, if_log):
 
     else :
 
-        f = lambda x: dif_cs_sp(Z, x, g1, L)
+        f = lambda x: br_dif_cs_sp(Z, x, g1, L)
         deg = 100
 
         # Numerator
@@ -443,7 +443,7 @@ def cdf_sp_gauss(Z, k, g1, L, if_log):
 
     return result
 
-def cdf_sp_quad(Z, k, g1, L):
+def br_cdf_sp_quad(Z, k, g1, L):
     '''
     Cumulative Distribution Function (CDF) of the Bremsstrahlung process  assuming screening with a single-exponential potential (Fermi)
     Integration method is quadrature
@@ -456,13 +456,13 @@ def cdf_sp_quad(Z, k, g1, L):
         result : CDF (no units)
     '''
 
-    numerator = quad(lambda k, Z, g1: dif_cs_sp(Z, k, g1, L), 0., k, args=(Z, g1))[0]
-    denominator = quad(lambda k, Z, g1: dif_cs_sp(Z, k, g1, L), 0., g1-1., args=(Z, g1))[0]
+    numerator = quad(lambda k, Z, g1: br_dif_cs_sp(Z, k, g1, L), 0., k, args=(Z, g1))[0]
+    denominator = quad(lambda k, Z, g1: br_dif_cs_sp(Z, k, g1, L), 0., g1-1., args=(Z, g1))[0]
     result = numerator / denominator
     
     return result
 
-def rad_cs_sp(Z, g1, L):
+def br_rad_cs_sp(Z, g1, L):
     '''
     Bremsstrahlung radiative cross-section assuming screening with a single-exponential potential (Fermi)
     Integration method is quadrature
@@ -474,11 +474,11 @@ def rad_cs_sp(Z, g1, L):
         result : radiative cross-section (m^2)
     '''
 
-    phi = quad(lambda k, Z, g1: k*dif_cs_sp(Z, k, g1, L), 0., g1-1., args=(Z, g1))[0]
+    phi = quad(lambda k, Z, g1: k*br_dif_cs_sp(Z, k, g1, L), 0., g1-1., args=(Z, g1))[0]
     
     return phi
 
-def rad_cs_dp(Z, g1, L, T, ni, Zstar):
+def br_rad_cs_dp(Z, g1, L, T, ni, Zstar):
     '''
     Bremsstrahlung radiative cross-section assuming screening with a double-exponential potential (Fermi)
     Integration method is quadrature
@@ -490,11 +490,11 @@ def rad_cs_dp(Z, g1, L, T, ni, Zstar):
         result : radiative cross-section (m^2)
     '''
 
-    phi = quad(lambda k, Z, g1: k*dif_cs_dp(Z, k, g1, T, ni, Zstar), 0., g1-1., args=(Z, g1))[0]
+    phi = quad(lambda k, Z, g1: k*br_dif_cs_dp(Z, k, g1, T, ni, Zstar), 0., g1-1., args=(Z, g1))[0]
     
     return phi
 
-def tot_cs_sp_quad(Z, g1, L):
+def br_tot_cs_sp_quad(Z, g1, L):
     '''
     Bremsstrahlung total cross-section assuming screening with a single-exponential potential (Fermi)
     Integration method is quadrature
@@ -506,11 +506,11 @@ def tot_cs_sp_quad(Z, g1, L):
         result : total cross-section (m^2)
     '''
 
-    result = quad(lambda k, Z, g1: dif_cs_sp(Z, k, g1, L), 0., g1-1., args=(Z, g1))[0]
+    result = quad(lambda k, Z, g1: br_dif_cs_sp(Z, k, g1, L), 0., g1-1., args=(Z, g1))[0]
     
     return result
 
-def tot_cs_sp_gauss(Z, g1, L, kmin, if_log):
+def br_tot_cs_sp_gauss(Z, g1, L, kmin, if_log):
     '''
     Bremsstrahlung total cross-section assuming screening with a single-exponential potential (Fermi)
     Integration method is Gauss-Legendre
@@ -526,7 +526,7 @@ def tot_cs_sp_gauss(Z, g1, L, kmin, if_log):
 
     if if_log :
 
-        f = lambda x: x * dif_cs_sp(Z, x, g1, L)
+        f = lambda x: x * br_dif_cs_sp(Z, x, g1, L)
         deg = 100
         
         a = np.log(kmin*(g1-1.))
@@ -541,7 +541,7 @@ def tot_cs_sp_gauss(Z, g1, L, kmin, if_log):
 
     else :
     
-        f = lambda x: dif_cs_sp(Z, x, g1, L)
+        f = lambda x: br_dif_cs_sp(Z, x, g1, L)
         deg = 100
     
         # Denominator
@@ -557,7 +557,7 @@ def tot_cs_sp_gauss(Z, g1, L, kmin, if_log):
     
     return integral
 
-def tot_cs_dp_gauss(Z, g1, T, ni, Zstar, kmin, if_log):
+def br_tot_cs_dp_gauss(Z, g1, T, ni, Zstar, kmin, if_log):
     '''
     Bremsstrahlung total cross-section assuming screening with a double-exponential potential (Fermi)
     Integration method is Gauss-Legendre
@@ -575,7 +575,7 @@ def tot_cs_dp_gauss(Z, g1, T, ni, Zstar, kmin, if_log):
 
     if if_log :
 
-        f = lambda x: x * dif_cs_dp(Z, x, g1, T, ni, Zstar)
+        f = lambda x: x * br_dif_cs_dp(Z, x, g1, T, ni, Zstar)
         deg = 100
         
         a = np.log(kmin*(g1-1.))
@@ -590,7 +590,7 @@ def tot_cs_dp_gauss(Z, g1, T, ni, Zstar, kmin, if_log):
 
     else :
     
-        f = lambda x: dif_cs_dp(Z, x, g1, T, ni, Zstar)
+        f = lambda x: br_dif_cs_dp(Z, x, g1, T, ni, Zstar)
         deg = 100
     
         # Denominator
