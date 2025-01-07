@@ -2,9 +2,9 @@
 
 If you use this repository, please cite the reference articles
 
-B. Martinez et al., Phys. Plasmas 26, 103109 (2019)  https://doi.org/10.1063/1.5118339 
-
 M. Lobet, PhD Thesis, Univ. Bordeaux (2015)  https://theses.hal.science/tel-01314224/
+
+B. Martinez et al., Phys. Plasmas 26, 103109 (2019)  https://doi.org/10.1063/1.5118339 
 
 # plot_cross_sections
 
