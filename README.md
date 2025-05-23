@@ -24,7 +24,7 @@ A set of user-friendly jupyter notebooks plotting the cross-sections of QED proc
 
 # Installation and setup
 
-No installation is required.
+No installation required.
 
 # Usage
 
